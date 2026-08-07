@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { CampusVenue, QuestionTemplate, CampusAuditRecord, UserRole, AuditAssignment } from './types/audit';
+import type { CampusVenue, QuestionTemplate, CampusAuditRecord, UserRole, AuditAssignment, AuditAssignmentStatus } from './types/audit';
 import { ADMIN_PROFILE, DEMO_AUDITORS } from './types/audit';
 import { ALL_56_CAMPUS_VENUES } from './data/locationRegistry';
 import { loadAssignments, saveAssignments, loadQuestionBank, saveQuestionBank, loadAuditRecords, saveAuditRecords, loadActiveAuditorId, saveActiveAuditorId, loadVenues, saveVenues, loadAuditors, saveAuditors } from './utils/storage';

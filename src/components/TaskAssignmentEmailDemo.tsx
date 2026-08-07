@@ -70,7 +70,7 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
       instructions: 'Conduct official broadcast FC audit across all 10 checkpoints: common area cleaning, fire extinguishers, UPS & batteries, ACs, lights/fans, transmitter & antenna, mics/consoles, studio equipment, speakers/receivers/recorders, and essential registers.',
       assignedAt: '2026-07-28 10:15 AM',
       status: 'ASSIGNED_EMAIL_SENT',
-      qrPayload: 'QR-FC-FMRAD01-SECURE-11494120-77274890',
+      qrPayload: 'QR-FC-FMRAD01-SECURE-11497318-77278462',
       geofenceRadiusMeters: 20,
       isReadByAuditee: false
     }

@@ -42,7 +42,8 @@ export type VenueCategory =
   | 'Dining & Food Services'
   | 'Academic Buildings'
   | 'Administrative'
-  | 'Utility & Infrastructure';
+  | 'Utility & Infrastructure'
+  | 'Media & Broadcasting';
 
 export type AuditStatus = 
   | 'SCHEDULED'
@@ -60,7 +61,9 @@ export type DefectIssueCategory =
   | 'Infrastructure'
   | 'Network Maintanence'
   | 'Power House'
-  | 'Transport Facilities';
+  | 'Transport Facilities'
+  | 'Electrical'
+  | 'Network';
 
 export interface PredefinedQuestion {
   id: string;

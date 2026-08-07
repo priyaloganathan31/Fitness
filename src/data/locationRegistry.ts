@@ -507,9 +507,9 @@ export const ALL_56_CAMPUS_VENUES: CampusVenue[] = [
     name: 'Campus FM Radio Station (90.4 MHz)',
     category: 'Media & Broadcasting',
     building: 'Media Tower & Acoustic Sound Studios, 3rd Floor',
-    geoCoordinates: { lat: 11.494120, lng: 77.274890 }, // FM Radio Station GPS
+    geoCoordinates: { lat: 11.497318, lng: 77.278462 }, // FM Radio Station GPS
     geofenceRadiusMeters: 20,
-    qrPayload: 'QR-FC-FMRAD01-SECURE-11494120-77274890',
+    qrPayload: 'QR-FC-FMRAD01-SECURE-11497318-77278462',
     assignedAuditor: 'Prof. Soundararajan (FM Station Incharge)',
     assignedAuditee: 'RJ Anand, Station Programme Coordinator',
     scheduleFrequencyDays: 15,
