@@ -1,7 +1,7 @@
 import React from 'react';
 import type { UserRole } from '../types/audit';
 import { ADMIN_PROFILE, DEMO_AUDITORS } from '../types/audit';
-import { ShieldCheck, Monitor, Smartphone, LogOut } from 'lucide-react';
+import { ShieldCheck, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
@@ -9,8 +9,6 @@ interface NavbarProps {
   activeRole: UserRole;
   setActiveRole: (role: UserRole) => void;
   flaggedReviewCount: number;
-  viewMode: 'DESKTOP' | 'MOBILE';
-  setViewMode: (mode: 'DESKTOP' | 'MOBILE') => void;
   onSignOut?: () => void;
 }
 
@@ -20,8 +18,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeRole,
   setActiveRole,
   flaggedReviewCount,
-  viewMode,
-  setViewMode,
   onSignOut
 }) => {
   return (
@@ -67,52 +63,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
         </div>
 
-        {/* Viewport Mode & Sign Out Controls */}
+        {/* User Actions & Sign Out */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           
-          {/* Desktop vs Mobile Mode Switcher */}
-          <div style={{ display: 'flex', background: 'rgba(0, 0, 0, 0.5)', padding: '3px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
-            <button
-              onClick={() => setViewMode('DESKTOP')}
-              title="Desktop Web Mode"
-              style={{
-                padding: '5px 12px',
-                borderRadius: '6px',
-                border: 'none',
-                background: viewMode === 'DESKTOP' ? '#2563EB' : 'transparent',
-                color: viewMode === 'DESKTOP' ? '#FFFFFF' : '#94A3B8',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                fontSize: '0.75rem',
-                fontWeight: 800
-              }}
-            >
-              <Monitor size={14} /> Desktop
-            </button>
-
-            <button
-              onClick={() => setViewMode('MOBILE')}
-              title="Mobile App Mode"
-              style={{
-                padding: '5px 12px',
-                borderRadius: '6px',
-                border: 'none',
-                background: viewMode === 'MOBILE' ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' : 'transparent',
-                color: viewMode === 'MOBILE' ? '#FFFFFF' : '#94A3B8',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                fontSize: '0.75rem',
-                fontWeight: 800
-              }}
-            >
-              <Smartphone size={14} /> Mobile App
-            </button>
-          </div>
-
           {/* Sign Out Button */}
           {onSignOut && (
             <button
