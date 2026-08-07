@@ -49,7 +49,7 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
       auditorEmail: 'sibi.john@bitsathy.ac.in',
       dueDate: new Date().toISOString().split('T')[0],
       priority: 'URGENT',
-      instructions: 'Conduct 24-point FC audit inspection. Verify bio-hazard waste liners, fire extinguisher tags, and oxygen cylinder pressure.',
+      instructions: 'Conduct FC audit inspection. Verify bio-hazard waste liners, fire extinguisher tags, and oxygen cylinder pressure.',
       assignedAt: '2026-07-28 09:30 AM',
       status: 'ASSIGNED_EMAIL_SENT',
       qrPayload: 'QR-FC-MEDCTR01-SECURE-11493954-77274503',
@@ -80,7 +80,7 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
   const [selectedVenueId, setSelectedVenueId] = useState<string>(venues[0]?.id || 'FC-LOC-01');
   const [priority, setPriority] = useState<'URGENT' | 'HIGH' | 'ROUTINE'>('URGENT');
   const [dueDate, setDueDate] = useState<string>(new Date().toISOString().split('T')[0]);
-  const [instructions, setInstructions] = useState<string>('Inspect all 24 FC checkpoints carefully. Ensure live photo capture for any NO responses.');
+  const [instructions, setInstructions] = useState<string>('Inspect all FC checkpoints carefully. Ensure live photo capture for any NO responses.');
 
   // Email Preview Modal State
   const [activeEmailModalTask, setActiveEmailModalTask] = useState<AssignedTask | null>(null);
@@ -93,7 +93,7 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
     const subject = encodeURIComponent(`[${task.priority}] FC Audit Task Assignment - ${task.venueName} (${task.venueCode})`);
     const body = encodeURIComponent(
       `Respected ${task.assignedAuditee},\n\n` +
-      `You have been assigned as the On-Site Facility Inspector (Auditee) to conduct the official 24-point Infrastructure Fitness Certificate (FC) audit for:\n\n` +
+      `You have been assigned as the On-Site Facility Inspector (Auditee) to conduct the official Infrastructure Fitness Certificate (FC) audit for:\n\n` +
       `📍 Venue: ${task.venueName} (${task.venueCode})\n` +
       `📅 Due Date: ${task.dueDate}\n` +
       `🎯 Geofence Requirement: Must be within ${task.geofenceRadiusMeters}m radius\n` +
@@ -531,7 +531,7 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
                 </h4>
 
                 <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0, lineClamp: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                  "Respected Mrs. Priya L, You have been assigned as the On-Site Facility Inspector to conduct the 24-point Infrastructure Fitness Certificate audit for {msg.venueName}. Directives: {msg.instructions}"
+                  "Respected Mrs. Priya L, You have been assigned as the On-Site Facility Inspector to conduct the Infrastructure Fitness Certificate audit for {msg.venueName}. Directives: {msg.instructions}"
                 </p>
 
                 <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -597,7 +597,7 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
               </p>
 
               <p style={{ fontSize: '0.88rem', color: '#334155' }}>
-                You have been assigned as the <strong>On-Site Facility Inspector (Auditee)</strong> to conduct the official 24-point Infrastructure Fitness Certificate (FC) audit for the venue specified below:
+                You have been assigned as the <strong>On-Site Facility Inspector (Auditee)</strong> to conduct the official Infrastructure Fitness Certificate (FC) audit for the venue specified below:
               </p>
 
               {/* Venue Audit Spec Box */}

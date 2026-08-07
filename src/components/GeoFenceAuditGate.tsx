@@ -411,7 +411,7 @@ export const GeoFenceAuditGate: React.FC<GeoFenceAuditGateProps> = ({ venue, act
         <div>
           {canUnlockForm ? (
             <div style={{ fontSize: '0.85rem', color: '#059669', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircle2 size={18} /> Live GPS Geo-Fence Verified ({distanceMeters}m away). Gate unlocked & ready to start 24-point audit!
+              <CheckCircle2 size={18} /> Live GPS Geo-Fence Verified ({distanceMeters}m away). Gate unlocked & ready to start FC audit!
             </div>
           ) : (
             <div style={{ fontSize: '0.82rem', color: '#D97706', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -439,7 +439,7 @@ export const GeoFenceAuditGate: React.FC<GeoFenceAuditGateProps> = ({ venue, act
             boxShadow: canUnlockForm ? '0 4px 14px rgba(5, 150, 105, 0.4)' : 'none'
           }}
         >
-          <Lock size={16} /> START 24-POINT FC AUDIT NOW
+          <Lock size={16} /> START FC AUDIT NOW
         </button>
       </div>
 
