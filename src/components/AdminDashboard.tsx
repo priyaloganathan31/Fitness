@@ -3,7 +3,7 @@ import type { CampusVenue, QuestionTemplate, CampusAuditRecord, AuditAssignment,
 import { DEMO_AUDITORS, ADMIN_PROFILE } from '../types/audit';
 import { readAndParseUploadedTemplate, convertParsedToQuestionTemplate } from '../utils/templateParser';
 import type { TemplateParseResult } from '../utils/templateParser';
-import { ShieldCheck, Plus, Upload, Search, CheckCircle2, Clock, UserCheck, Layers, AlertTriangle, Mail, Check, FileText, Sparkles, RefreshCw, X, UserPlus, Building2, LayoutDashboard, Edit3, Trash2 } from 'lucide-react';
+import { ShieldCheck, Plus, Upload, Search, CheckCircle2, Clock, UserCheck, Layers, AlertTriangle, Mail, Check, FileText, Sparkles, RefreshCw, X, UserPlus, Building2, LayoutDashboard, Edit3, Trash2, Menu } from 'lucide-react';
 
 interface AdminDashboardProps {
   venues: CampusVenue[];
@@ -35,6 +35,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onViewCertificate
 }) => {
   const [adminTab, setAdminTab] = useState<'venues' | 'assignments' | 'templates' | 'question_bank' | 'passed' | 'failed' | 'auditors'>('venues');
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [adminTab]);
   const [showAssignModal, setShowAssignModal] = useState<boolean>(false);
 
   // Add Auditor Modal State
@@ -324,8 +329,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   return (
     <div style={{ display: 'flex', gap: '24px', minHeight: 'calc(100vh - 120px)', flexWrap: 'wrap' }}>
 
+      {/* Mobile Menu Toggle Button */}
+      <button 
+        className="mobile-menu-btn" 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        style={{ padding: '10px 16px', background: '#2563EB', color: '#FFFFFF', border: 'none', borderRadius: '10px', fontSize: '0.9rem', fontWeight: 800, alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+      >
+        {isSidebarOpen ? <X size={18} /> : <Menu size={18} />} {isSidebarOpen ? 'Close Menu' : 'Open Navigation Menu'}
+      </button>
+
       {/* Modern Left Sidebar Navigation */}
-      <aside style={{
+      <aside className={`dashboard-sidebar ${isSidebarOpen ? 'mobile-open' : ''}`} style={{
         width: '240px',
         background: '#0F172A',
         border: '1px solid rgba(255, 255, 255, 0.08)',
