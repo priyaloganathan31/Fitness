@@ -1,0 +1,489 @@
+{
+  "venues": [
+    {
+      "id": "FC-LOC-01",
+      "code": "MED-CTR-01",
+      "name": "Campus Health & Medical Center",
+      "category": "Medical Facilities",
+      "building": "Health Sciences Block, Ground Floor",
+      "geoCoordinates": {
+        "lat": 11.493954,
+        "lng": 77.274503
+      },
+      "geofenceRadiusMeters": 20,
+      "qrPayload": "QR-FC-MEDCTR01-SECURE-11493954-77274503",
+      "assignedAuditor": "Prof. Sibi John (Fitness Certificate Incharge)",
+      "assignedAuditee": "Mrs. Priya L, AP-III, Dept of IT",
+      "scheduleFrequencyDays": 15,
+      "lastAuditDate": "2026-07-12",
+      "nextAuditDueDate": "2026-07-27",
+      "status": "IN_PROGRESS",
+      "activeTemplateId": "TMPL-BIT-MED-24",
+      "imageUrl": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800",
+      "totalCheckpoints": 24
+    },
+    {
+      "id": "FC-LOC-02",
+      "code": "FM-RAD-01",
+      "name": "Campus FM Radio Station (90.4 MHz)",
+      "category": "Media & Broadcasting",
+      "building": "Media Tower & Acoustic Sound Studios, 3rd Floor",
+      "geoCoordinates": {
+        "lat": 11.497318,
+        "lng": 77.278462
+      },
+      "geofenceRadiusMeters": 20,
+      "qrPayload": "QR-FC-FMRAD01-SECURE-11497318-77278462",
+      "assignedAuditor": "Prof. Soundararajan (FM Station Incharge)",
+      "assignedAuditee": "RJ Anand, Station Programme Coordinator",
+      "scheduleFrequencyDays": 15,
+      "lastAuditDate": "2026-07-20",
+      "nextAuditDueDate": "2026-08-04",
+      "status": "SCHEDULED",
+      "activeTemplateId": "TMPL-BIT-FM-10",
+      "imageUrl": "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800",
+      "totalCheckpoints": 10
+    }
+  ],
+  "templates": [
+    {
+      "id": "TMPL-BIT-MED-24",
+      "title": "Fitness Certificate - Medical Center Incharge (Bannari Amman Institute of Technology)",
+      "description": "Official 24-point infrastructure & medical fitness certificate audit checklist categorized into 6 core operational headers: Cleaning, Electrical, Network, Plumbing, Documentation, and Feedback.",
+      "venueCategory": "Medical Facilities",
+      "createdBy": "Professor In-charge (Bannari Amman Institute of Technology)",
+      "createdAt": "2026-07-27",
+      "questions": [
+        {
+          "id": "BIT-MED-03",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Did you check the waste disposal & cleaning work?",
+          "description": "Verify general waste disposal, daily housekeeping routine, and cleanliness.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "MEDIUM",
+          "aiContextKeywords": [
+            "Waste Disposal",
+            "Cleaning Work",
+            "Housekeeping",
+            "Sanitation Log"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which waste disposal area failed sanitation standards?",
+            "Was improper segregation of hazardous medical waste observed?"
+          ]
+        },
+        {
+          "id": "BIT-MED-04",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Did you check the General Amenities?",
+          "description": "Check patient seating, drinking water dispenser, and waiting hall amenities cleanliness.",
+          "isMandatory": false,
+          "requiresPhotoIfNo": true,
+          "priority": "LOW",
+          "aiContextKeywords": [
+            "General Amenities",
+            "Waiting Hall Seating",
+            "Drinking Water Filter"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Specify which general amenity requires repair or replacement."
+          ]
+        },
+        {
+          "id": "BIT-MED-05",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Whether the workplace infrastructure maintained properly?",
+          "description": "Inspect wall paint, doors, window glazing, ceiling, and structural flooring integrity.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "MEDIUM",
+          "aiContextKeywords": [
+            "Workplace Maintenance",
+            "Infrastructure Integrity",
+            "Structural Finish"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Is there visible structural damage, dampness, or broken fixtures?"
+          ]
+        },
+        {
+          "id": "BIT-MED-09",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Are all emergency doors open freely without obstacles?",
+          "description": "Verify panic bar latches and clear un-obstructed passage in emergency exit corridors.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Emergency Door Latch",
+            "Exit Obstruction",
+            "Panic Bar Latch"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "What obstacle is blocking the emergency exit doorway?"
+          ]
+        },
+        {
+          "id": "BIT-MED-18",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Did you check the disposal of Medicine and Medical waste?",
+          "description": "Verify bio-medical waste disposal, bio-hazard bin color liners, and sharp needle box.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Medical Waste Disposal",
+            "Sharps Container",
+            "Expired Drug Disposal"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Is expired medicine disposed of per biomedical waste protocol?"
+          ]
+        },
+        {
+          "id": "BIT-MED-19",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Did you check Bed Making?",
+          "description": "Check clean linen, pillow covers, bed sheet sterilization, and mattress hygiene.",
+          "isMandatory": false,
+          "requiresPhotoIfNo": true,
+          "priority": "LOW",
+          "aiContextKeywords": [
+            "Bed Making Linen",
+            "Patient Mattress Hygiene",
+            "Sterile Sheet"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "How many patient observation beds are missing clean sterile linen?"
+          ]
+        },
+        {
+          "id": "BIT-MED-20",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Are all the floors & restrooms cleaned properly?",
+          "description": "Check floor cleaning log, disinfectant mopping, and restroom sanitation.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "MEDIUM",
+          "aiContextKeywords": [
+            "Floor Cleaning Log",
+            "Restroom Sanitation",
+            "Disinfectant Mop"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which restroom or bay failed hygiene standards?"
+          ]
+        },
+        {
+          "id": "BIT-MED-21",
+          "section": "1. Cleaning (Housekeeping, 5S, Civil & Sanitation)",
+          "questionText": "Are the scrap removed periodically?",
+          "description": "Verify scrap clearance from rear yard, storage rooms, and corridors.",
+          "isMandatory": false,
+          "requiresPhotoIfNo": true,
+          "priority": "LOW",
+          "aiContextKeywords": [
+            "Scrap Removal",
+            "Corridor Clearance",
+            "Waste Accumulation"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Where is un-cleared scrap accumulated in the facility?"
+          ]
+        },
+        {
+          "id": "BIT-MED-01",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Are all the Safety equipment working in good condition?",
+          "description": "Inspect main electrical safety gear, eyewash, emergency showers, and protective devices.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Safety Equipment",
+            "Eyewash Station",
+            "Personal Protective Equipment",
+            "Safety Inspection Tag"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which specific safety equipment item is damaged or out of service?",
+            "Is replacement safety equipment available in the central store?"
+          ]
+        },
+        {
+          "id": "BIT-MED-02",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Are the medicines & medical equipment available in good condition?",
+          "description": "Check stock condition, diagnostic equipment integrity, and storage environment.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Medicine Condition",
+            "Medical Equipment Check",
+            "Storage Cabinet Integrity"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "State which medicine category or equipment has failed condition check.",
+            "Has the damaged equipment been isolated from the active treatment bay?"
+          ]
+        },
+        {
+          "id": "BIT-MED-07",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Are all the Fire extinguishers have a valid expiry date?",
+          "description": "Inspect hydro-test date and inspection tag on all CO2 / ABC fire extinguishers.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Fire Extinguisher Tag",
+            "Extinguisher Expiry Date",
+            "Hydro-Test Tag"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which extinguisher location has an expired inspection tag?"
+          ]
+        },
+        {
+          "id": "BIT-MED-08",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Are all fire safety equipment working in good condition?",
+          "description": "Test smoke detectors, fire alarm pull stations, and hose reels.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Fire Safety Gear",
+            "Smoke Detector LED",
+            "Fire Hose Reel",
+            "Alarm Panel"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which fire safety device failed functional testing?"
+          ]
+        },
+        {
+          "id": "BIT-MED-10",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Are all the cameras functioning properly?",
+          "description": "Check CCTV camera live feed on security monitor and camera lens clarity.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "MEDIUM",
+          "aiContextKeywords": [
+            "CCTV Camera Feed",
+            "Security Camera Lens",
+            "DVR Recording Log"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which specific CCTV camera channel has lost video signal?"
+          ]
+        },
+        {
+          "id": "BIT-MED-13",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Did you check the medical equipment (Monitor, BP equipment, etc.)?",
+          "description": "Test Patient Monitor, Sphygmomanometer, Stethoscope, Pulse Oximeter, and ECG Machine.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Patient Monitor",
+            "BP Equipment Sphygmomanometer",
+            "Pulse Oximeter",
+            "ECG Unit"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which electronic medical monitor or BP cuff failed calibration?"
+          ]
+        },
+        {
+          "id": "BIT-MED-22",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Did you check the A/C working in all the floors?",
+          "description": "Test air conditioning cooling performance and compressor sound in all rooms.",
+          "isMandatory": false,
+          "requiresPhotoIfNo": true,
+          "priority": "MEDIUM",
+          "aiContextKeywords": [
+            "AC Air Conditioning",
+            "Cooling Temperature",
+            "AC Compressor Unit"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which room or floor has a non-functional split AC unit?"
+          ]
+        },
+        {
+          "id": "BIT-MED-23",
+          "section": "2. Electrical (Equipment, Devices, CCTV, UPS, Lighting & Fire Safety)",
+          "questionText": "Did you check all the electrical items functioning properly? (Bulbs / Fans Switchboards)",
+          "description": "Inspect lighting bulbs, ceiling fans, switchboards, and electrical sockets.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Electrical Switchboards",
+            "Light Bulbs Fans",
+            "Power Sockets Earthing"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Specify broken switchboards or fused light fixtures identified."
+          ]
+        },
+        {
+          "id": "BIT-MED-24",
+          "section": "4. Plumbing (Water Supply, Drainage & Sewage)",
+          "questionText": "Did you check the water supply?",
+          "description": "Test tap water pressure, continuous supply, overhead tank level, and RO purifier.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Water Supply Pressure",
+            "RO Purifier Filter",
+            "Overhead Tank Level"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Is there a interruption in continuous potable water supply?"
+          ]
+        },
+        {
+          "id": "BIT-MED-06",
+          "section": "5. Documentation (Registers, Stock, Consumables, SOPs & Compliance)",
+          "questionText": "Whether the essential registers maintained properly?",
+          "description": "Verify Out-Patient Log, Emergency Register, Pharmacy Stock Register, and Ambulance Log.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "MEDIUM",
+          "aiContextKeywords": [
+            "Essential Registers",
+            "OPD Logbook",
+            "Pharmacy Register",
+            "Ambulance Log"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which specific official register is missing or un-updated?"
+          ]
+        },
+        {
+          "id": "BIT-MED-11",
+          "section": "5. Documentation (Registers, Stock, Consumables, SOPs & Compliance)",
+          "questionText": "Are all the medicines have a valid expiry date?",
+          "description": "Audit pharmacy shelf stock and emergency crash cart for zero expired medications.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Medicine Expiry Date",
+            "Pharmacy Shelf Audit",
+            "Crash Cart Expiry"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "List expired drug names and batch numbers identified."
+          ]
+        },
+        {
+          "id": "BIT-MED-14",
+          "section": "5. Documentation (Registers, Stock, Consumables, SOPs & Compliance)",
+          "questionText": "Are the emergency medicines available?",
+          "description": "Verify 100% availability of Adrenaline, Atropine, Antihistamines, and IV Fluids.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Emergency Medicines Stock",
+            "IV Fluids Availability",
+            "Adrenaline Vials"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which critical emergency drug is out of stock?"
+          ]
+        },
+        {
+          "id": "BIT-MED-15",
+          "section": "5. Documentation (Registers, Stock, Consumables, SOPs & Compliance)",
+          "questionText": "Are the dressing & injection items (Cotton, Gauze, Plaster, disposable syringe, etc.) available?",
+          "description": "Inspect sterile cotton rolls, gauze, adhesive plasters, and disposable needle syringes.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Dressing Items",
+            "Sterile Gauze",
+            "Disposable Syringes",
+            "Adhesive Plaster"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Which dressing or injection item is depleted below minimum threshold?"
+          ]
+        },
+        {
+          "id": "BIT-MED-16",
+          "section": "5. Documentation (Registers, Stock, Consumables, SOPs & Compliance)",
+          "questionText": "Did you check the availability of Oxygen gas in the Cylinder?",
+          "description": "Inspect pressure gauge on main Oxygen cylinder (Must read >120 Bar).",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Oxygen Cylinder Gas",
+            "Oxygen Tank Pressure",
+            "Flowmeter Gauge"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "What exact pressure reading (bar / psi) is shown on the Oxygen cylinder gauge?"
+          ]
+        },
+        {
+          "id": "BIT-MED-17",
+          "section": "5. Documentation (Registers, Stock, Consumables, SOPs & Compliance)",
+          "questionText": "Did you check the Inventory and Ambulance Medicine?",
+          "description": "Audit campus emergency ambulance vehicle, portable suction, stretcher, and medicine box.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Ambulance Inventory",
+            "Ambulance Medicine Box",
+            "Portable Stretcher"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "Is the campus emergency ambulance operational and ready for deployment?"
+          ]
+        },
+        {
+          "id": "BIT-MED-12",
+          "section": "6. Feedback (Service Quality, Safety & Overall Satisfaction)",
+          "questionText": "Did you check the readiness of the Emergency Room?",
+          "description": "Verify emergency room readiness, staff responsiveness, and overall service satisfaction.",
+          "isMandatory": true,
+          "requiresPhotoIfNo": true,
+          "priority": "HIGH",
+          "aiContextKeywords": [
+            "Emergency Room Readiness",
+            "Trauma Bay Setup",
+            "Crash Cart Standby"
+          ],
+          "sampleFollowUpQuestionsIfNo": [
+            "What critical item is missing from Emergency Room standby?"
+          ]
+        }
+      ]
+    }
+  ],
+  "assignments": [],
+  "records": [],
+  "auditors": [
+    {
+      "id": "auditor-priya",
+      "roleType": "AUDITOR",
+      "name": "Priya",
+      "email": "priyal@bitsathy.ac.in",
+      "title": "Medical Center Lead Auditor & On-Site Inspector",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200"
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 import type { CampusVenue, QuestionTemplate, AuditAssignment, CampusAuditRecord, UserRole } from '../types/audit';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-
+// In production (Vercel), requests to /api are rewritten to the backend via vercel.json.
+// In local development, they point to localhost:5000/api if VITE_API_BASE_URL is not set.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 export interface ApiHealthResponse {
   connected: boolean;
   dbState: number;
