@@ -4,7 +4,7 @@ import { DEMO_AUDITORS } from '../types/audit';
 import { GeoFenceAuditGate } from './GeoFenceAuditGate';
 import { ActiveAuditSession } from './ActiveAuditSession';
 import { PreAuditTemplateOverview } from './PreAuditTemplateOverview';
-import { Play, Award, Clock, ArrowLeft, CheckCircle2, Building2, MapPin, ShieldCheck } from 'lucide-react';
+import { Play, Award, Clock, ArrowLeft, CheckCircle2, Building2, MapPin, ShieldCheck, Menu, X } from 'lucide-react';
 
 interface AuditorDashboardProps {
   activeAuditor: UserRole;
@@ -32,6 +32,11 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
   onViewCertificate
 }) => {
   const [auditorSubTab, setAuditorSubTab] = useState<'assigned' | 'completed' | 'venues'>('assigned');
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [auditorSubTab]);
   const [activeExecutingAssignment, setActiveExecutingAssignment] = useState<AuditAssignment | null>(null);
   const [selectedTemplateForAudit, setSelectedTemplateForAudit] = useState<QuestionTemplate | null>(null);
   const [auditExecutionStep, setAuditExecutionStep] = useState<'GEOFENCE' | 'SESSION' | 'OVERVIEW'>('GEOFENCE');
@@ -212,8 +217,17 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
         /* AUDITOR ASSIGNED DASHBOARD VIEW */
         <div style={{ display: 'flex', gap: '24px', minHeight: 'calc(100vh - 120px)', flexWrap: 'wrap' }}>
 
+          {/* Mobile Menu Toggle Button */}
+          <button 
+            className="mobile-menu-btn" 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            style={{ padding: '10px 16px', background: '#059669', color: '#FFFFFF', border: 'none', borderRadius: '10px', fontSize: '0.9rem', fontWeight: 800, alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+          >
+            {isSidebarOpen ? <X size={18} /> : <Menu size={18} />} {isSidebarOpen ? 'Close Menu' : 'Open Auditor Menu'}
+          </button>
+
           {/* Modern Left Sidebar Navigation for Auditor */}
-          <aside style={{
+          <aside className={`dashboard-sidebar ${isSidebarOpen ? 'mobile-open' : ''}`} style={{
             width: '240px',
             background: '#0F172A',
             border: '1px solid rgba(255, 255, 255, 0.08)',

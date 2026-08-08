@@ -15,7 +15,6 @@ import { AuthenticityRankingScorecard } from './components/AuthenticityRankingSc
 import { LocationRegistryManager } from './components/LocationRegistryManager';
 import { TaskAssignmentEmailDemo } from './components/TaskAssignmentEmailDemo';
 import { FitnessCertificateModal } from './components/FitnessCertificateModal';
-import { MobileFrameWrapper } from './components/MobileFrameWrapper';
 import { ArrowLeft } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -36,7 +35,6 @@ export const App: React.FC = () => {
     const savedId = loadActiveAuditorId();
     return auditors.find(a => a.id === savedId) || auditors[0] || DEMO_AUDITORS[0];
   });
-  const [viewMode, setViewMode] = useState<'DESKTOP' | 'MOBILE'>('DESKTOP');
   
   // Interactive Audit Session State
   const [activeVenue, setActiveVenue] = useState<CampusVenue>(() => venues[0] || ALL_56_CAMPUS_VENUES[0]);
@@ -194,23 +192,20 @@ export const App: React.FC = () => {
   };
 
   return (
-    <MobileFrameWrapper viewMode={viewMode} onToggleViewMode={setViewMode}>
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#090D16', color: '#F8FAFC' }}>
-        
-        {/* Navbar */}
-        <Navbar
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          activeRole={activeRole}
-          setActiveRole={setActiveRole}
-          flaggedReviewCount={flaggedCount}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          onSignOut={() => setIsAuthenticated(false)}
-        />
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#090D16', color: '#F8FAFC' }}>
+      
+      {/* Navbar */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        activeRole={activeRole}
+        setActiveRole={setActiveRole}
+        flaggedReviewCount={flaggedCount}
+        onSignOut={() => setIsAuthenticated(false)}
+      />
 
-        {/* Main Content Area */}
-        <main style={{ flex: 1, padding: viewMode === 'MOBILE' ? '12px' : '28px', maxWidth: '1440px', margin: '0 auto', width: '100%' }}>
+      {/* Main Content Area */}
+      <main style={{ flex: 1, padding: '16px 24px', maxWidth: '1440px', margin: '0 auto', width: '100%' }}>
           
           {/* Admin Dashboard View */}
           {activeRole.roleType === 'ADMIN' && activeTab !== 'location-registry' && activeTab !== 'email-notification-demo' && activeTab !== 'view-scorecard' && (
@@ -385,6 +380,5 @@ export const App: React.FC = () => {
         )}
 
       </div>
-    </MobileFrameWrapper>
   );
 };
