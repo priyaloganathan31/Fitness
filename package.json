@@ -10,7 +10,8 @@
     "dev:full": "concurrently \"npm run dev\" \"npm run server:dev\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed": "node server/scripts/seed.js"
   },
   "dependencies": {
     "@types/canvas-confetti": "^1.9.0",
