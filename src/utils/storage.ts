@@ -2,6 +2,14 @@ import type { AuditAssignment, QuestionTemplate, CampusAuditRecord, CampusVenue,
 import { DEMO_AUDITORS } from '../types/audit';
 import { MOCK_AUDIT_RECORDS } from '../data/mockData';
 import { INITIAL_QUESTION_TEMPLATES, ALL_56_CAMPUS_VENUES } from '../data/locationRegistry';
+import {
+  saveVenuesApi,
+  saveTemplatesApi,
+  saveAssignmentsApi,
+  saveRecordsApi,
+  saveAuditorsApi,
+  seedDatabaseApi
+} from './api';
 
 const KEYS = {
   ASSIGNMENTS: 'fc_audit_assignments_v8',
@@ -32,6 +40,8 @@ export function saveAuditors(auditors: UserRole[]): void {
   } catch (e) {
     console.error('Failed to save auditors to localStorage', e);
   }
+  // Sync to MongoDB backend in background
+  saveAuditorsApi(auditors).catch(err => console.warn('[MongoDB Sync] Auditors sync failed:', err));
 }
 
 export function loadVenues(): CampusVenue[] {
@@ -54,6 +64,8 @@ export function saveVenues(venues: CampusVenue[]): void {
   } catch (e) {
     console.error('Failed to save venues to localStorage', e);
   }
+  // Sync to MongoDB backend in background
+  saveVenuesApi(venues).catch(err => console.warn('[MongoDB Sync] Venues sync failed:', err));
 }
 
 export function loadAssignments(): AuditAssignment[] {
@@ -66,7 +78,6 @@ export function loadAssignments(): AuditAssignment[] {
   } catch (e) {
     console.warn('Failed to load assignments from localStorage', e);
   }
-  // Default assignments featuring both Demo #1 (Medical Center) and Demo #2 (FM Radio Station 90.4 MHz)
   const defaults: AuditAssignment[] = [
     {
       id: 'ASG-2026-MED-PILOT',
@@ -155,6 +166,8 @@ export function saveAssignments(assignments: AuditAssignment[]): void {
   } catch (e) {
     console.error('Failed to save assignments to localStorage', e);
   }
+  // Sync to MongoDB backend in background
+  saveAssignmentsApi(assignments).catch(err => console.warn('[MongoDB Sync] Assignments sync failed:', err));
 }
 
 export function loadQuestionBank(): QuestionTemplate[] {
@@ -163,7 +176,6 @@ export function loadQuestionBank(): QuestionTemplate[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure all default preset templates exist in the returned set
         const existingIds = new Set(parsed.map((t: QuestionTemplate) => t.id));
         const merged = [...parsed];
         for (const initialTmpl of INITIAL_QUESTION_TEMPLATES) {
@@ -187,6 +199,8 @@ export function saveQuestionBank(templates: QuestionTemplate[]): void {
   } catch (e) {
     console.error('Failed to save question bank to localStorage', e);
   }
+  // Sync to MongoDB backend in background
+  saveTemplatesApi(templates).catch(err => console.warn('[MongoDB Sync] Templates sync failed:', err));
 }
 
 export function loadAuditRecords(): CampusAuditRecord[] {
@@ -209,6 +223,8 @@ export function saveAuditRecords(records: CampusAuditRecord[]): void {
   } catch (e) {
     console.error('Failed to save audit records to localStorage', e);
   }
+  // Sync to MongoDB backend in background
+  saveRecordsApi(records).catch(err => console.warn('[MongoDB Sync] Records sync failed:', err));
 }
 
 export function loadActiveAuditorId(): string {
@@ -217,4 +233,19 @@ export function loadActiveAuditorId(): string {
 
 export function saveActiveAuditorId(id: string): void {
   localStorage.setItem(KEYS.ACTIVE_AUDITOR_ID, id);
+}
+
+/**
+ * Seed all current local data directly into MongoDB backend
+ */
+export async function seedCurrentDataToMongoDB(): Promise<{ success: boolean; message: string; stats?: any }> {
+  const payload = {
+    venues: loadVenues(),
+    templates: loadQuestionBank(),
+    assignments: loadAssignments(),
+    records: loadAuditRecords(),
+    auditors: loadAuditors(),
+    forceReset: true
+  };
+  return await seedDatabaseApi(payload);
 }

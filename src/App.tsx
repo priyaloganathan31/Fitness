@@ -3,6 +3,7 @@ import type { CampusVenue, QuestionTemplate, CampusAuditRecord, UserRole, AuditA
 import { ADMIN_PROFILE, DEMO_AUDITORS } from './types/audit';
 import { ALL_56_CAMPUS_VENUES } from './data/locationRegistry';
 import { loadAssignments, saveAssignments, loadQuestionBank, saveQuestionBank, loadAuditRecords, saveAuditRecords, loadActiveAuditorId, saveActiveAuditorId, loadVenues, saveVenues, loadAuditors, saveAuditors } from './utils/storage';
+import { fetchVenuesApi, fetchTemplatesApi, fetchAssignmentsApi, fetchRecordsApi, fetchAuditorsApi } from './utils/api';
 import { SmartAuditLogin } from './components/SmartAuditLogin';
 import { Navbar } from './components/Navbar';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -47,7 +48,28 @@ export const App: React.FC = () => {
   const [selectedRecord, setSelectedRecord] = useState<CampusAuditRecord | null>(records[0] || null);
   const [showCertModal, setShowCertModal] = useState<boolean>(false);
 
-  // Sync state changes to localStorage
+  // Hydrate from MongoDB Backend if available
+  useEffect(() => {
+    const hydrateFromMongoDB = async () => {
+      const dbVenues = await fetchVenuesApi();
+      if (dbVenues && dbVenues.length > 0) setVenues(dbVenues);
+
+      const dbTemplates = await fetchTemplatesApi();
+      if (dbTemplates && dbTemplates.length > 0) setTemplates(dbTemplates);
+
+      const dbAssignments = await fetchAssignmentsApi();
+      if (dbAssignments && dbAssignments.length > 0) setAssignments(dbAssignments);
+
+      const dbRecords = await fetchRecordsApi();
+      if (dbRecords && dbRecords.length > 0) setRecords(dbRecords);
+
+      const dbAuditors = await fetchAuditorsApi();
+      if (dbAuditors && dbAuditors.length > 0) setAuditors(dbAuditors);
+    };
+    hydrateFromMongoDB();
+  }, []);
+
+  // Sync state changes to localStorage & MongoDB API
   useEffect(() => {
     saveVenues(venues);
   }, [venues]);
@@ -56,7 +78,6 @@ export const App: React.FC = () => {
     saveAuditors(auditors);
   }, [auditors]);
 
-  // Sync state changes to localStorage
   useEffect(() => {
     saveAssignments(assignments);
   }, [assignments]);

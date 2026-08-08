@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "server": "node server/index.js",
+    "server:dev": "nodemon server/index.js",
+    "dev:full": "concurrently \"npm run dev\" \"npm run server:dev\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -12,15 +15,23 @@
   "dependencies": {
     "@types/canvas-confetti": "^1.9.0",
     "canvas-confetti": "^1.9.4",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "lucide-react": "^1.27.0",
+    "mongoose": "^9.9.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "concurrently": "^10.0.4",
+    "nodemon": "^3.1.14",
     "oxlint": "^1.71.0",
     "typescript": "~6.0.2",
     "vite": "^8.1.1"
