@@ -3,6 +3,13 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dns from 'node:dns';
+
+// Fix for Windows ISP DNS SRV lookup ECONNREFUSED on mongodb+srv://
+try {
+  dns.setDefaultResultOrder('ipv4first');
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {}
 
 import { Venue } from '../models/Venue.js';
 import { Template } from '../models/Template.js';

@@ -1,4 +1,11 @@
 import mongoose from 'mongoose';
+import dns from 'node:dns';
+
+// Fix for Windows ISP DNS SRV lookup ECONNREFUSED on mongodb+srv://
+try {
+  dns.setDefaultResultOrder('ipv4first');
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {}
 
 export const connectDB = async () => {
   try {
