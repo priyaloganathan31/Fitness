@@ -15,7 +15,7 @@ export const DEMO_AUDITORS: UserRole[] = [
     roleType: 'AUDITOR',
     name: 'Priya',
     email: 'priyal@bitsathy.ac.in',
-    title: 'Medical Center Lead Auditor & On-Site Inspector',
+    title: 'Assistant Professor - III',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
   }
 ];

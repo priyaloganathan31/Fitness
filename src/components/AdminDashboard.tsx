@@ -3,7 +3,16 @@ import type { CampusVenue, QuestionTemplate, CampusAuditRecord, AuditAssignment,
 import { DEMO_AUDITORS, ADMIN_PROFILE } from '../types/audit';
 import { readAndParseUploadedTemplate, convertParsedToQuestionTemplate } from '../utils/templateParser';
 import type { TemplateParseResult } from '../utils/templateParser';
-import { ShieldCheck, Plus, Upload, Search, CheckCircle2, Clock, UserCheck, Layers, AlertTriangle, Mail, Check, FileText, Sparkles, RefreshCw, X, UserPlus, Building2, LayoutDashboard, Edit3, Trash2, Menu } from 'lucide-react';
+import { ShieldCheck, Plus, Upload, Search, CheckCircle2, Clock, UserCheck, Layers, AlertTriangle, Mail, Check, FileText, Sparkles, RefreshCw, X, UserPlus, Building2, LayoutDashboard, Edit3, Trash2, Menu, Calendar, CalendarDays, ExternalLink, Download } from 'lucide-react';
+import { calculateDynamicDueDate, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../utils/calendarUtils';
+
+const AUDITOR_DESIGNATIONS = [
+  'Assistant Professor - I',
+  'Assistant Professor - II',
+  'Assistant Professor - III',
+  'Associate Professor',
+  'Professor'
+];
 
 interface AdminDashboardProps {
   venues: CampusVenue[];
@@ -46,13 +55,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [showAddAuditorModal, setShowAddAuditorModal] = useState<boolean>(false);
   const [newAuditorName, setNewAuditorName] = useState<string>('');
   const [newAuditorEmail, setNewAuditorEmail] = useState<string>('');
-  const [newAuditorTitle, setNewAuditorTitle] = useState<string>('Certified Campus Lead Auditor');
+  const [newAuditorTitle, setNewAuditorTitle] = useState<string>('Assistant Professor - I');
 
   // Edit Auditor Modal State
   const [editingAuditor, setEditingAuditor] = useState<UserRole | null>(null);
   const [editAuditorName, setEditAuditorName] = useState<string>('');
   const [editAuditorEmail, setEditAuditorEmail] = useState<string>('');
-  const [editAuditorTitle, setEditAuditorTitle] = useState<string>('');
+  const [editAuditorTitle, setEditAuditorTitle] = useState<string>('Assistant Professor - I');
 
   // Add Venue Modal State
   const [showAddVenueModal, setShowAddVenueModal] = useState<boolean>(false);
@@ -74,8 +83,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [departmentSite, setDepartmentSite] = useState<string>(venues[0] ? `${venues[0].name} (${venues[0].code})` : 'Campus Health & Medical Center (MED-CTR-01)');
   const [selectedAuditorId, setSelectedAuditorId] = useState<string>(auditors[0]?.id || 'auditor-priya');
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(templates[0]?.id || '');
-  const [dueDate, setDueDate] = useState<string>('2026-08-06');
   const [priority, setPriority] = useState<'HIGH' | 'MEDIUM' | 'LOW'>('HIGH');
+  const [dueDate, setDueDate] = useState<string>(() => calculateDynamicDueDate(venues[0], 'HIGH'));
   const [notes, setNotes] = useState<string>('Verify emergency oxygen cylinder pressure, cold chain vaccine temperatures, and AED readiness.');
 
   const handleVenueSelectionChange = (vId: string) => {
@@ -85,6 +94,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setDepartmentSite(`${targetVenue.name} (${targetVenue.code})`);
       setAuditTitle(`${targetVenue.name} FC Audit`);
       
+      // Dynamic Due Date calculation based on selected venue & priority
+      const computedDueDate = calculateDynamicDueDate(targetVenue, priority);
+      setDueDate(computedDueDate);
+
       const matchingTmpl = templates.find(t => t.id === targetVenue.activeTemplateId) ||
                            templates.find(t => t.venueCategory === targetVenue.category) ||
                            templates.find(t => t.venueCode === targetVenue.code);
@@ -92,6 +105,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         setSelectedTemplateId(matchingTmpl.id);
       }
     }
+  };
+
+  const handlePrioritySelectionChange = (newPriority: 'HIGH' | 'MEDIUM' | 'LOW') => {
+    setPriority(newPriority);
+    const targetVenue = venues.find(v => v.id === selectedAssignVenueId);
+    const computedDueDate = calculateDynamicDueDate(targetVenue, newPriority);
+    setDueDate(computedDueDate);
   };
   
   // Email Notification Modal State
@@ -1255,16 +1275,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                 <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#334155', display: 'block', marginBottom: '4px' }}>
-                    Due Date:
+                  <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span>Due Date:</span>
+                    <span style={{ fontSize: '0.72rem', color: '#2563EB', fontWeight: 700 }}>⚡ Auto-Calculated</span>
                   </label>
                   <input
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.85rem', fontWeight: 700 }}
                     required
                   />
+                  {/* Quick Dynamic Date Presets */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const targetVenue = venues.find(v => v.id === selectedAssignVenueId);
+                        if (targetVenue?.nextAuditDueDate) setDueDate(targetVenue.nextAuditDueDate);
+                      }}
+                      style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#F1F5F9', cursor: 'pointer' }}
+                    >
+                      📍 Venue Schedule
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDueDate(new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0])}
+                      style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', border: '1px solid #FCA5A5', background: '#FEF2F2', color: '#991B1B', cursor: 'pointer' }}
+                    >
+                      ⚡ +3 Days
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDueDate(new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0])}
+                      style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', border: '1px solid #93C5FD', background: '#EFF6FF', color: '#1E40AF', cursor: 'pointer' }}
+                    >
+                      📅 +7 Days
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDueDate(new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0])}
+                      style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#334155', cursor: 'pointer' }}
+                    >
+                      🗓️ +14 Days
+                    </button>
+                  </div>
                 </div>
 
                 <div>
@@ -1273,13 +1328,72 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </label>
                   <select
                     value={priority}
-                    onChange={(e) => setPriority(e.target.value as any)}
+                    onChange={(e) => handlePrioritySelectionChange(e.target.value as any)}
                     style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
                   >
-                    <option value="HIGH">HIGH (Urgent)</option>
-                    <option value="MEDIUM">MEDIUM (Standard)</option>
-                    <option value="LOW">LOW (Routine)</option>
+                    <option value="HIGH">HIGH (Urgent - 3 Days)</option>
+                    <option value="MEDIUM">MEDIUM (Standard - 7 Days)</option>
+                    <option value="LOW">LOW (Routine - 14 Days)</option>
                   </select>
+
+                  {/* Calendar Connectivity Widget */}
+                  <div style={{ marginTop: '8px', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '8px 10px', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#475569', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Calendar size={13} color="#2563EB" /> Connect to Calendar:
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        type="button"
+                        title="Add event to Google Calendar"
+                        onClick={() => {
+                          const url = getGoogleCalendarUrl({
+                            title: auditTitle,
+                            description: notes,
+                            location: departmentSite,
+                            dueDate: dueDate,
+                            priority: priority
+                          });
+                          window.open(url, '_blank');
+                        }}
+                        style={{ flex: 1, fontSize: '0.7rem', padding: '4px 6px', background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '6px', color: '#2563EB', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}
+                      >
+                        <ExternalLink size={10} /> Google
+                      </button>
+                      <button
+                        type="button"
+                        title="Add event to Outlook Calendar"
+                        onClick={() => {
+                          const url = getOutlookCalendarUrl({
+                            title: auditTitle,
+                            description: notes,
+                            location: departmentSite,
+                            dueDate: dueDate,
+                            priority: priority
+                          });
+                          window.open(url, '_blank');
+                        }}
+                        style={{ flex: 1, fontSize: '0.7rem', padding: '4px 6px', background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '6px', color: '#0284C7', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}
+                      >
+                        <ExternalLink size={10} /> Outlook
+                      </button>
+                      <button
+                        type="button"
+                        title="Download .ics calendar file"
+                        onClick={() => {
+                          downloadIcsFile({
+                            title: auditTitle,
+                            description: notes,
+                            location: departmentSite,
+                            dueDate: dueDate,
+                            priority: priority
+                          });
+                        }}
+                        style={{ flex: 1, fontSize: '0.7rem', padding: '4px 6px', background: '#059669', border: 'none', borderRadius: '6px', color: '#FFFFFF', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}
+                      >
+                        <Download size={10} /> .ICS
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1418,14 +1532,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#334155', display: 'block', marginBottom: '4px' }}>Auditor Role & Designation</label>
-                <input
-                  type="text"
+                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#334155', display: 'block', marginBottom: '4px' }}>Designation *</label>
+                <select
+                  required
                   value={newAuditorTitle}
                   onChange={(e) => setNewAuditorTitle(e.target.value)}
-                  placeholder="e.g. Electrical Safety Incharge & Senior Auditor"
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
-                />
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid #CBD5E1',
+                    fontSize: '0.85rem',
+                    background: '#FFFFFF',
+                    color: '#0F172A',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {AUDITOR_DESIGNATIONS.map(desig => (
+                    <option key={desig} value={desig}>{desig}</option>
+                  ))}
+                </select>
               </div>
 
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
@@ -1486,14 +1612,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#334155', display: 'block', marginBottom: '4px' }}>Auditor Role & Designation</label>
-                <input
-                  type="text"
+                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#334155', display: 'block', marginBottom: '4px' }}>Designation *</label>
+                <select
+                  required
                   value={editAuditorTitle}
                   onChange={(e) => setEditAuditorTitle(e.target.value)}
-                  placeholder="e.g. Senior Campus Lead Auditor"
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
-                />
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid #CBD5E1',
+                    fontSize: '0.85rem',
+                    background: '#FFFFFF',
+                    color: '#0F172A',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {AUDITOR_DESIGNATIONS.map(desig => (
+                    <option key={desig} value={desig}>{desig}</option>
+                  ))}
+                </select>
               </div>
 
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>

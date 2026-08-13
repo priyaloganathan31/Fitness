@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { CampusVenue, UserRole } from '../types/audit';
-import { Mail, Send, ExternalLink, Inbox, Sparkles, RefreshCw } from 'lucide-react';
+import { Mail, Send, ExternalLink, Inbox, Sparkles, RefreshCw, Calendar, Download } from 'lucide-react';
+import { calculateDynamicDueDate, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../utils/calendarUtils';
 
 interface AssignedTask {
   id: string;
@@ -77,9 +78,10 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
   ]);
 
   // Form State for New Assignment
-  const [selectedVenueId, setSelectedVenueId] = useState<string>(venues[0]?.id || 'FC-LOC-01');
+  const initialVenue = venues[0];
+  const [selectedVenueId, setSelectedVenueId] = useState<string>(initialVenue?.id || 'FC-LOC-01');
   const [priority, setPriority] = useState<'URGENT' | 'HIGH' | 'ROUTINE'>('URGENT');
-  const [dueDate, setDueDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [dueDate, setDueDate] = useState<string>(() => calculateDynamicDueDate(initialVenue, 'URGENT'));
   const [instructions, setInstructions] = useState<string>('Inspect all FC checkpoints carefully. Ensure live photo capture for any NO responses.');
 
   // Email Preview Modal State
@@ -87,6 +89,20 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
   const [dispatchToast, setDispatchToast] = useState<string | null>(null);
 
   const selectedVenue = venues.find(v => v.id === selectedVenueId) || venues[0];
+
+  const handleVenueChange = (vId: string) => {
+    setSelectedVenueId(vId);
+    const target = venues.find(v => v.id === vId);
+    if (target) {
+      setDueDate(calculateDynamicDueDate(target, priority));
+    }
+  };
+
+  const handlePriorityChange = (newPrio: 'URGENT' | 'HIGH' | 'ROUTINE') => {
+    setPriority(newPrio);
+    const target = venues.find(v => v.id === selectedVenueId);
+    setDueDate(calculateDynamicDueDate(target, newPrio));
+  };
 
   // Open Device Native Email Client (Outlook, Gmail, Apple Mail) via mailto:
   const handleOpenNativeMailClient = (task: AssignedTask) => {
@@ -281,7 +297,7 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
                 </label>
                 <select
                   value={selectedVenueId}
-                  onChange={(e) => setSelectedVenueId(e.target.value)}
+                  onChange={(e) => handleVenueChange(e.target.value)}
                   style={{ width: '100%', background: '#F8FAFC', color: '#0F172A', border: '1px solid #CBD5E1', padding: '10px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700 }}
                 >
                   {venues.map(v => (
@@ -309,23 +325,90 @@ export const TaskAssignmentEmailDemo: React.FC<TaskAssignmentEmailDemoProps> = (
                   <label style={{ fontSize: '0.78rem', color: '#475569', display: 'block', marginBottom: '4px', fontWeight: 800 }}>Audit Priority:</label>
                   <select
                     value={priority}
-                    onChange={(e) => setPriority(e.target.value as any)}
+                    onChange={(e) => handlePriorityChange(e.target.value as any)}
                     style={{ width: '100%', background: '#F8FAFC', color: '#0F172A', border: '1px solid #CBD5E1', padding: '10px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700 }}
                   >
-                    <option value="URGENT">🔴 URGENT</option>
-                    <option value="HIGH">🟠 HIGH</option>
-                    <option value="ROUTINE">🟢 ROUTINE</option>
+                    <option value="URGENT">🔴 URGENT (3 Days)</option>
+                    <option value="HIGH">🟠 HIGH (7 Days)</option>
+                    <option value="ROUTINE">🟢 ROUTINE (14 Days)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '0.78rem', color: '#475569', display: 'block', marginBottom: '4px', fontWeight: 800 }}>Inspection Due Date:</label>
+                  <label style={{ fontSize: '0.78rem', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px', fontWeight: 800 }}>
+                    <span>Inspection Due Date:</span>
+                    <span style={{ fontSize: '0.7rem', color: '#2563EB' }}>⚡ Dynamic</span>
+                  </label>
                   <input
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
                     style={{ width: '100%', background: '#F8FAFC', color: '#0F172A', border: '1px solid #CBD5E1', padding: '10px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700 }}
                   />
+                  {/* Dynamic Date Pills */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setDueDate(new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0])}
+                      style={{ fontSize: '0.68rem', padding: '2px 5px', borderRadius: '4px', border: '1px solid #FCA5A5', background: '#FEF2F2', color: '#991B1B', cursor: 'pointer' }}
+                    >
+                      ⚡ +3 Days
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDueDate(new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0])}
+                      style={{ fontSize: '0.68rem', padding: '2px 5px', borderRadius: '4px', border: '1px solid #93C5FD', background: '#EFF6FF', color: '#1E40AF', cursor: 'pointer' }}
+                    >
+                      📅 +7 Days
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDueDate(new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0])}
+                      style={{ fontSize: '0.68rem', padding: '2px 5px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#475569', cursor: 'pointer' }}
+                    >
+                      🗓️ +14 Days
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Calendar Export Widget */}
+              <div style={{ background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '8px 12px', borderRadius: '8px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#334155', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Calendar size={13} color="#2563EB" /> 📅 Calendar Connectivity:
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = getGoogleCalendarUrl({
+                        title: `FC Audit - ${selectedVenue.name}`,
+                        description: instructions,
+                        location: `${selectedVenue.name} (${selectedVenue.code})`,
+                        dueDate: dueDate,
+                        priority: priority
+                      });
+                      window.open(url, '_blank');
+                    }}
+                    style={{ flex: 1, fontSize: '0.7rem', padding: '4px 6px', background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '6px', color: '#2563EB', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}
+                  >
+                    <ExternalLink size={10} /> Google Calendar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      downloadIcsFile({
+                        title: `FC Audit - ${selectedVenue.name}`,
+                        description: instructions,
+                        location: `${selectedVenue.name} (${selectedVenue.code})`,
+                        dueDate: dueDate,
+                        priority: priority
+                      });
+                    }}
+                    style={{ flex: 1, fontSize: '0.7rem', padding: '4px 6px', background: '#059669', border: 'none', borderRadius: '6px', color: '#FFFFFF', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}
+                  >
+                    <Download size={10} /> Download .ICS
+                  </button>
                 </div>
               </div>
 

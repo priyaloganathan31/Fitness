@@ -4,7 +4,8 @@ import { DEMO_AUDITORS } from '../types/audit';
 import { GeoFenceAuditGate } from './GeoFenceAuditGate';
 import { ActiveAuditSession } from './ActiveAuditSession';
 import { PreAuditTemplateOverview } from './PreAuditTemplateOverview';
-import { Play, Award, Clock, ArrowLeft, CheckCircle2, Building2, MapPin, ShieldCheck, Menu, X } from 'lucide-react';
+import { Play, Award, Clock, ArrowLeft, CheckCircle2, Building2, MapPin, ShieldCheck, Menu, X, Calendar, Download, ExternalLink } from 'lucide-react';
+import { getGoogleCalendarUrl, downloadIcsFile } from '../utils/calendarUtils';
 
 interface AuditorDashboardProps {
   activeAuditor: UserRole;
@@ -441,8 +442,43 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
                           {asg.title}
                         </h4>
 
-                        <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '10px' }}>
-                          📍 <strong>{asg.departmentSite}</strong> • Due: <strong style={{ color: '#DC2626' }}>{asg.dueDate}</strong>
+                        <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+                          <div>📍 <strong>{asg.departmentSite}</strong> • Due: <strong style={{ color: '#DC2626' }}>{asg.dueDate}</strong></div>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <button
+                              type="button"
+                              title="Add to Google Calendar"
+                              onClick={() => {
+                                const url = getGoogleCalendarUrl({
+                                  title: asg.title,
+                                  description: asg.notes || 'Campus FC Audit Task',
+                                  location: asg.departmentSite,
+                                  dueDate: asg.dueDate,
+                                  priority: asg.priority
+                                });
+                                window.open(url, '_blank');
+                              }}
+                              style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1E40AF', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px' }}
+                            >
+                              <Calendar size={11} /> Google Cal
+                            </button>
+                            <button
+                              type="button"
+                              title="Download .ics Calendar File"
+                              onClick={() => {
+                                downloadIcsFile({
+                                  title: asg.title,
+                                  description: asg.notes || 'Campus FC Audit Task',
+                                  location: asg.departmentSite,
+                                  dueDate: asg.dueDate,
+                                  priority: asg.priority
+                                });
+                              }}
+                              style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', background: '#F0FDF4', border: '1px solid #86EFAC', color: '#166534', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px' }}
+                            >
+                              <Download size={11} /> .ICS
+                            </button>
+                          </div>
                         </div>
 
                         {asg.notes && (
