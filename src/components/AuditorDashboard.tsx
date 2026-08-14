@@ -64,7 +64,7 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
     return audIdMatch || nameMatch;
   });
 
-  const pendingAssignments = myAssignments.filter(a => a && (a.status === 'Assigned' || a.status === 'In Progress' || a.status === 'Accepted' || a.status === 'Re-Audit Requested' || a.status === 'Pending Admin Review' || a.status === 'Rejected'));
+  const pendingAssignments = myAssignments.filter(a => a && (a.status === 'Assigned' || a.status === 'In Progress' || a.status === 'Accepted' || a.status === 'Re-Audit Requested' || a.status === 'Pending Admin Review'));
   const completedAssignments = myAssignments.filter(a => a && (a.status === 'Completed' || a.status === 'Completed (Auto-Approved)' || a.status === 'Approved by Admin' || a.status === 'Under Review'));
 
   const myPassedRecords = (records || []).filter(r => r && (viewAllTasksMode || (r.auditorName && activeAuditor?.name && r.auditorName.toLowerCase().includes(activeAuditor.name.toLowerCase()))));

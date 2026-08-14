@@ -219,6 +219,7 @@ export const App: React.FC = () => {
               onUpdateAuditor={(updated) => setAuditors(prev => prev.map(a => a.id === updated.id ? updated : a))}
               onAddVenue={(v) => setVenues(prev => [...prev, v])}
               onCreateAssignment={handleCreateAssignment}
+              onUpdateAssignmentStatus={handleUpdateAssignmentStatus}
               onAddTemplateToBank={handleAddTemplateToBank}
               onNavigateToTab={setActiveTab}
               onSelectRecord={(rec) => {
@@ -318,6 +319,7 @@ export const App: React.FC = () => {
               assignments={assignments}
               records={records}
               onCreateAssignment={handleCreateAssignment}
+              onUpdateAssignmentStatus={handleUpdateAssignmentStatus}
               onAddTemplateToBank={handleAddTemplateToBank}
               onNavigateToTab={setActiveTab}
               onSelectRecord={(rec) => {

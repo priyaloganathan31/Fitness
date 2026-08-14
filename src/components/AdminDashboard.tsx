@@ -3,7 +3,7 @@ import type { CampusVenue, QuestionTemplate, CampusAuditRecord, AuditAssignment,
 import { DEMO_AUDITORS, ADMIN_PROFILE } from '../types/audit';
 import { readAndParseUploadedTemplate, convertParsedToQuestionTemplate } from '../utils/templateParser';
 import type { TemplateParseResult } from '../utils/templateParser';
-import { ShieldCheck, Plus, Upload, Search, CheckCircle2, Clock, UserCheck, Layers, AlertTriangle, Mail, Check, FileText, Sparkles, RefreshCw, X, UserPlus, Building2, LayoutDashboard, Edit3, Trash2, Menu, Calendar, CalendarDays, ExternalLink, Download } from 'lucide-react';
+import { ShieldCheck, Plus, Upload, Search, CheckCircle2, Clock, UserCheck, Layers, AlertTriangle, Mail, Check, FileText, Sparkles, RefreshCw, X, UserPlus, Building2, LayoutDashboard, Edit3, Trash2, Menu, Calendar, CalendarDays, ExternalLink, Download, Camera } from 'lucide-react';
 import { calculateDynamicDueDate, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../utils/calendarUtils';
 
 const AUDITOR_DESIGNATIONS = [
@@ -24,6 +24,7 @@ interface AdminDashboardProps {
   onUpdateAuditor?: (updatedAuditor: UserRole) => void;
   onAddVenue?: (venue: CampusVenue) => void;
   onCreateAssignment: (assignment: AuditAssignment) => void;
+  onUpdateAssignmentStatus?: (assignmentId: string, status: AuditAssignment['status'], notes?: string) => void;
   onAddTemplateToBank: (template: QuestionTemplate) => void;
   onNavigateToTab?: (tab: string) => void;
   onSelectRecord?: (record: CampusAuditRecord) => void;
@@ -40,11 +41,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onUpdateAuditor,
   onAddVenue,
   onCreateAssignment,
+  onUpdateAssignmentStatus,
   onAddTemplateToBank,
   onViewCertificate
 }) => {
   const [adminTab, setAdminTab] = useState<'venues' | 'assignments' | 'templates' | 'question_bank' | 'passed' | 'failed' | 'auditors'>('venues');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [viewingReviewRecord, setViewingReviewRecord] = useState<CampusAuditRecord | null>(null);
 
   React.useEffect(() => {
     setIsSidebarOpen(false);
@@ -245,8 +248,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     const matchedAsg = assignments.find(a => a.recordId === reAuditTargetRecord.id || a.venueId === reAuditTargetRecord.venueId);
     if (matchedAsg) {
-      matchedAsg.status = 'Re-Audit Requested';
-      matchedAsg.notes = `🔄 RE-AUDIT REQUESTED BY ADMIN: ${reAuditReasonNotes}`;
+      const rejNote = `🔄 RE-AUDIT REQUESTED BY ADMIN: ${reAuditReasonNotes}`;
+      if (onUpdateAssignmentStatus) {
+        onUpdateAssignmentStatus(matchedAsg.id, 'Re-Audit Requested', rejNote);
+      } else {
+        matchedAsg.status = 'Re-Audit Requested';
+        matchedAsg.notes = rejNote;
+      }
     } else {
       const reAsg: AuditAssignment = {
         id: `ASG-RE-${Date.now().toString().slice(-4)}`,
@@ -697,10 +705,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <td style={{ padding: '12px', color: '#475569', fontWeight: 600 }}>{asg.dueDate}</td>
                     <td style={{ padding: '12px' }}>
                       {asg.status === 'Pending Admin Review' || asg.status === 'Under Review' ? (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
                           <button
                             onClick={() => {
-                              asg.status = 'Approved by Admin';
+                              const rec = records.find(r => r.id === asg.recordId || r.venueId === asg.venueId || r.venueCode === asg.venueCode) || records[0];
+                              if (rec) setViewingReviewRecord(rec);
+                            }}
+                            style={{ background: '#2563EB', color: '#FFF', border: 'none', padding: '5px 10px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
+                          >
+                            📷 View Auditor Captured Photos
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (onUpdateAssignmentStatus) {
+                                onUpdateAssignmentStatus(asg.id, 'Approved by Admin');
+                              } else {
+                                asg.status = 'Approved by Admin';
+                              }
                               alert(`✅ Audit approved by Admin! Auditor can now view and print the Fitness Certificate.`);
                               setAdminTab('assignments');
                             }}
@@ -712,8 +733,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             onClick={() => {
                               const reason = prompt('Reason for rejecting audit:');
                               if (reason !== null) {
-                                asg.status = 'Rejected by Admin';
-                                asg.notes = `❌ REJECTED BY ADMIN: ${reason || 'Incomplete inspection'}`;
+                                const rejNote = `❌ REJECTED BY ADMIN: ${reason || 'Incomplete inspection'}`;
+                                if (onUpdateAssignmentStatus) {
+                                  onUpdateAssignmentStatus(asg.id, 'Rejected by Admin', rejNote);
+                                } else {
+                                  asg.status = 'Rejected by Admin';
+                                  asg.notes = rejNote;
+                                }
                                 alert(`❌ Audit rejected by Admin.`);
                                 setAdminTab('assignments');
                               }
@@ -724,7 +750,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           </button>
                           <button
                             onClick={() => {
-                              const rec = records.find(r => r.id === asg.recordId || r.venueId === asg.venueId) || records[0];
+                              const rec = records.find(r => r.id === asg.recordId || r.venueId === asg.venueId || r.venueCode === asg.venueCode) || records[0];
                               setReAuditTargetRecord(rec);
                               setShowReAuditModal(true);
                             }}
@@ -1176,6 +1202,159 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
             ))
+          )}
+        </div>
+      )}
+
+      {/* TAB 5: REVIEW QUEUE & AUDITOR CAPTURED PHOTOS EVIDENCE */}
+      {adminTab === 'failed' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div className="glass-panel" style={{ padding: '20px 24px', background: '#FFFFFF', borderRadius: '12px', borderLeft: '6px solid #EF4444' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertTriangle size={20} color="#DC2626" /> Audits Pending Admin Review & Flagged Inspection Reports ({failedRecords.length})
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: '#64748B', marginTop: '4px' }}>
+              These audit submissions did not meet the auto-approval threshold (Score &lt; 85% or failed checks). Inspect auditor-captured photo proofs, GPS location logs, and detailed findings below.
+            </p>
+          </div>
+
+          {failedRecords.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '32px', color: '#64748B', background: '#F8FAFC', borderRadius: '12px' }}>
+              🎉 No pending audits requiring manual admin review right now!
+            </div>
+          ) : (
+            failedRecords.map(rec => {
+              const photos = Object.values(rec.predefinedAnswers || {}).filter(a => a && a.photoProof).map(a => a.photoProof!);
+              const matchedAsg = assignments.find(a => a.recordId === rec.id || a.venueId === rec.venueId || a.venueCode === rec.venueCode);
+
+              return (
+                <div key={rec.id} className="glass-panel" style={{ padding: '24px', background: '#FFFFFF', borderRadius: '14px', border: '1px solid #FCA5A5', boxShadow: '0 4px 14px rgba(220,38,38,0.08)' }}>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ background: '#FEE2E2', color: '#991B1B', fontSize: '0.78rem', fontWeight: 900, padding: '4px 10px', borderRadius: '6px', border: '1px solid #FCA5A5' }}>
+                          ⚠️ REQUIRES ADMIN REVIEW (Score: {rec.authenticity.overallScore}%)
+                        </span>
+                        <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>
+                          Audit Date: {rec.auditDate}
+                        </span>
+                      </div>
+
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', marginTop: '8px', marginBottom: '2px' }}>
+                        {rec.venueName} ({rec.venueCode})
+                      </h3>
+                      <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 700 }}>
+                        Auditor: <strong>{rec.auditorName}</strong> • Auditee: <strong>{rec.auditedByAuditeeName}</strong>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => setViewingReviewRecord(rec)}
+                        className="btn-primary"
+                        style={{ padding: '8px 16px', fontSize: '0.82rem', background: '#2563EB', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <Camera size={16} /> 📷 Open Photo & Audit Review
+                      </button>
+
+                      {matchedAsg && (
+                        <>
+                          <button
+                            onClick={() => {
+                              if (onUpdateAssignmentStatus) {
+                                onUpdateAssignmentStatus(matchedAsg.id, 'Approved by Admin');
+                              } else {
+                                matchedAsg.status = 'Approved by Admin';
+                              }
+                              alert(`✅ Audit approved by Admin! Auditor can now view and print the Fitness Certificate.`);
+                            }}
+                            style={{ background: '#059669', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 800, cursor: 'pointer' }}
+                          >
+                            ✅ Approve
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              const reason = prompt('Reason for rejecting audit:');
+                              if (reason !== null) {
+                                const rejNote = `❌ REJECTED BY ADMIN: ${reason || 'Incomplete inspection'}`;
+                                if (onUpdateAssignmentStatus) {
+                                  onUpdateAssignmentStatus(matchedAsg.id, 'Rejected by Admin', rejNote);
+                                } else {
+                                  matchedAsg.status = 'Rejected by Admin';
+                                  matchedAsg.notes = rejNote;
+                                }
+                                alert(`❌ Audit rejected by Admin.`);
+                              }
+                            }}
+                            style={{ background: '#DC2626', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 800, cursor: 'pointer' }}
+                          >
+                            ❌ Reject
+                          </button>
+                        </>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setReAuditTargetRecord(rec);
+                          setShowReAuditModal(true);
+                        }}
+                        style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FCA5A5', padding: '8px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <RefreshCw size={14} /> Re-Audit
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* AUDITOR CAPTURED PHOTOS GALLERY SECTION */}
+                  <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '16px', marginTop: '12px' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0F172A', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Camera size={16} color="#2563EB" /> 📸 Auditor On-Ground Captured Photos ({photos.length} Attached):
+                    </div>
+
+                    {photos.length === 0 ? (
+                      <div style={{ fontSize: '0.8rem', color: '#64748B', fontStyle: 'italic' }}>
+                        No specific photo proof files were attached for this audit.
+                      </div>
+                    ) : (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                        {photos.map(p => (
+                          <div key={p.id} style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '10px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ position: 'relative', height: '180px', background: '#090D16', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <img
+                                src={p.photoUrl}
+                                alt={p.caption}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                              <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(15, 23, 42, 0.85)', color: '#FFFFFF', fontSize: '0.7rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)' }}>
+                                {p.issueCategory || 'On-Ground Proof'}
+                              </span>
+                            </div>
+                            <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0F172A' }}>
+                                {p.caption || 'Captured Audit Photo Proof'}
+                              </div>
+                              <div style={{ fontSize: '0.72rem', color: '#64748B', display: 'flex', justifyContent: 'space-between' }}>
+                                <span>🕒 {p.timestamp}</span>
+                                {p.geoTag && <span>📍 {p.geoTag.lat.toFixed(5)}°, {p.geoTag.lng.toFixed(5)}°</span>}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {rec.authenticity.discrepancyFlags && rec.authenticity.discrepancyFlags.length > 0 && (
+                    <div style={{ marginTop: '12px', background: '#FEF2F2', border: '1px solid #FCA5A5', padding: '10px 14px', borderRadius: '8px', color: '#991B1B', fontSize: '0.78rem', fontWeight: 700 }}>
+                      <strong>⚠️ Discrepancy Flags:</strong> {rec.authenticity.discrepancyFlags.join(' | ')}
+                    </div>
+                  )}
+
+                </div>
+              );
+            })
           )}
         </div>
       )}
@@ -1814,6 +1993,226 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
             </form>
+
+          </div>
+        </div>
+      )}
+
+      {/* AUDITOR CAPTURED PHOTOS & AUDIT REVIEW MODAL */}
+      {viewingReviewRecord && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div className="glass-panel" style={{ background: '#FFFFFF', width: '100%', maxWidth: '860px', padding: '28px', borderRadius: '20px', color: '#0F172A', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
+            
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '16px', marginBottom: '20px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                  <span style={{ background: viewingReviewRecord.authenticity.overallScore >= 85 ? '#D1FAE5' : '#FEE2E2', color: viewingReviewRecord.authenticity.overallScore >= 85 ? '#065F46' : '#991B1B', fontSize: '0.78rem', fontWeight: 900, padding: '4px 10px', borderRadius: '6px' }}>
+                    Score: {viewingReviewRecord.authenticity.overallScore}% ({viewingReviewRecord.authenticity.overallScore >= 85 ? 'Self-Approved' : 'Pending Admin Review'})
+                  </span>
+                  <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 700 }}>
+                    Audit Date: {viewingReviewRecord.auditDate}
+                  </span>
+                </div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+                  📷 Auditor Photo & Compliance Evidence Review
+                </h2>
+                <div style={{ fontSize: '0.85rem', color: '#334155', marginTop: '4px', fontWeight: 700 }}>
+                  Facility: <strong>{viewingReviewRecord.venueName} ({viewingReviewRecord.venueCode})</strong> • Auditor: <strong>{viewingReviewRecord.auditorName}</strong>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setViewingReviewRecord(null)}
+                style={{ background: '#F1F5F9', border: 'none', padding: '8px', borderRadius: '50%', cursor: 'pointer', color: '#64748B' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Score Metrics Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '12px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>GPS Geo-Fence Precision</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: viewingReviewRecord.authenticity.gpsProximityScore >= 80 ? '#059669' : '#DC2626' }}>
+                  {viewingReviewRecord.gpsDistanceMeters}m drift ({viewingReviewRecord.authenticity.gpsProximityScore}%)
+                </div>
+              </div>
+              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '12px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>Dwell Time Logged</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0F172A' }}>
+                  {viewingReviewRecord.timeSpentMinutes} mins ({viewingReviewRecord.authenticity.dwellTimeScore}%)
+                </div>
+              </div>
+              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '12px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>Photo Authenticity Score</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#2563EB' }}>
+                  {viewingReviewRecord.authenticity.photoAuthenticityScore}%
+                </div>
+              </div>
+              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '12px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>AI Spot-Check Score</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#7C3AED' }}>
+                  {viewingReviewRecord.authenticity.aiDynamicCheckScore}%
+                </div>
+              </div>
+            </div>
+
+            {/* CAPTURED PHOTOS GALLERY */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Camera size={18} color="#2563EB" /> Auditor Captured Photos & EXIF Evidence
+              </h3>
+
+              {(() => {
+                const photos = Object.values(viewingReviewRecord.predefinedAnswers || {}).filter(a => a && a.photoProof).map(a => ({
+                  ...a.photoProof!,
+                  questionId: a.questionId,
+                  notes: a.notes,
+                  answer: a.answer
+                }));
+
+                if (photos.length === 0) {
+                  return (
+                    <div style={{ padding: '20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '12px', textAlign: 'center', color: '#64748B' }}>
+                      No photo proof files attached to this audit checklist.
+                    </div>
+                  );
+                }
+
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+                    {photos.map(p => (
+                      <div key={p.id} style={{ background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.06)' }}>
+                        <div style={{ position: 'relative', height: '240px', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <img
+                            src={p.photoUrl}
+                            alt={p.caption}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                          <span style={{ position: 'absolute', top: '10px', right: '10px', background: '#2563EB', color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 900, padding: '4px 10px', borderRadius: '6px' }}>
+                            {p.issueCategory || 'Proof Image'}
+                          </span>
+                        </div>
+                        <div style={{ padding: '16px' }}>
+                          <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#0F172A', marginBottom: '4px' }}>
+                            {p.caption || 'Captured Photo Evidence'}
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: '#475569', marginBottom: '8px' }}>
+                            Question ID: <strong style={{ color: '#2563EB' }}>{p.questionId}</strong> • Answer: <strong style={{ color: p.answer === 'NO' ? '#DC2626' : '#059669' }}>{p.answer}</strong>
+                          </div>
+                          {p.notes && (
+                            <div style={{ fontSize: '0.76rem', background: '#FEF3C7', color: '#78350F', padding: '6px 10px', borderRadius: '6px', marginBottom: '8px' }}>
+                              📝 Notes: {p.notes}
+                            </div>
+                          )}
+                          <div style={{ fontSize: '0.72rem', color: '#64748B', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #E2E8F0', paddingTop: '8px' }}>
+                            <span>🕒 {p.timestamp}</span>
+                            {p.geoTag && <span>📍 {p.geoTag.lat.toFixed(5)}°N, {p.geoTag.lng.toFixed(5)}°E</span>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Checklist Answers Table Summary */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#0F172A', marginBottom: '10px' }}>
+                Checklist Inspection Summary
+              </h3>
+              <div style={{ overflowX: 'auto', maxHeight: '220px', border: '1px solid #E2E8F0', borderRadius: '10px' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+                  <thead>
+                    <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
+                      <th style={{ padding: '8px 12px' }}>Question ID</th>
+                      <th style={{ padding: '8px 12px' }}>Result</th>
+                      <th style={{ padding: '8px 12px' }}>Photo Attached</th>
+                      <th style={{ padding: '8px 12px' }}>Auditor Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(viewingReviewRecord.predefinedAnswers || {}).map(([qId, ans]) => (
+                      <tr key={qId} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                        <td style={{ padding: '8px 12px', fontWeight: 800, color: '#2563EB' }}>{qId}</td>
+                        <td style={{ padding: '8px 12px', fontWeight: 900, color: ans.answer === 'YES' ? '#059669' : '#DC2626' }}>{ans.answer}</td>
+                        <td style={{ padding: '8px 12px' }}>{ans.photoProof ? '✅ Photo Proof Attached' : '—'}</td>
+                        <td style={{ padding: '8px 12px', color: '#475569' }}>{ans.notes || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Action Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #E2E8F0', paddingTop: '16px' }}>
+              <button
+                onClick={() => setViewingReviewRecord(null)}
+                className="btn-secondary"
+                style={{ padding: '10px 18px', fontSize: '0.85rem' }}
+              >
+                Close Review
+              </button>
+
+              {(() => {
+                const matchedAsg = assignments.find(a => a.recordId === viewingReviewRecord.id || a.venueId === viewingReviewRecord.venueId || a.venueCode === viewingReviewRecord.venueCode);
+                return (
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    {matchedAsg && (
+                      <>
+                        <button
+                          onClick={() => {
+                            if (onUpdateAssignmentStatus) {
+                              onUpdateAssignmentStatus(matchedAsg.id, 'Approved by Admin');
+                            } else {
+                              matchedAsg.status = 'Approved by Admin';
+                            }
+                            alert(`✅ Audit approved by Admin! Auditor can now view and print the Fitness Certificate.`);
+                            setViewingReviewRecord(null);
+                          }}
+                          className="btn-primary"
+                          style={{ padding: '10px 20px', fontSize: '0.85rem', background: '#059669', fontWeight: 900 }}
+                        >
+                          ✅ Approve Audit
+                        </button>
+                        <button
+                          onClick={() => {
+                            const reason = prompt('Reason for rejecting audit:');
+                            if (reason !== null) {
+                              const rejNote = `❌ REJECTED BY ADMIN: ${reason || 'Incomplete inspection'}`;
+                              if (onUpdateAssignmentStatus) {
+                                onUpdateAssignmentStatus(matchedAsg.id, 'Rejected by Admin', rejNote);
+                              } else {
+                                matchedAsg.status = 'Rejected by Admin';
+                                matchedAsg.notes = rejNote;
+                              }
+                              alert(`❌ Audit rejected by Admin.`);
+                              setViewingReviewRecord(null);
+                            }
+                          }}
+                          style={{ background: '#DC2626', color: '#FFF', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 900, cursor: 'pointer' }}
+                        >
+                          ❌ Reject Audit
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => {
+                        setReAuditTargetRecord(viewingReviewRecord);
+                        setShowReAuditModal(true);
+                        setViewingReviewRecord(null);
+                      }}
+                      style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FCA5A5', padding: '10px 20px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 900, cursor: 'pointer' }}
+                    >
+                      🔄 Request Re-Audit
+                    </button>
+                  </div>
+                );
+              })()}
+            </div>
 
           </div>
         </div>

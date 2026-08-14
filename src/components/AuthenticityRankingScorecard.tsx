@@ -160,6 +160,41 @@ export const AuthenticityRankingScorecard: React.FC<AuthenticityRankingScorecard
 
       </div>
 
+      {/* Captured Photo Evidence Gallery */}
+      {(() => {
+        const photos = Object.values(record.predefinedAnswers || {}).filter(a => a && a.photoProof).map(a => a.photoProof!);
+        if (photos.length === 0) return null;
+
+        return (
+          <div className="glass-panel" style={{ padding: '20px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#0F172A', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Camera size={18} color="#2563EB" /> Captured On-Ground Photo Proofs ({photos.length})
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+              {photos.map(p => (
+                <div key={p.id} style={{ background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: '12px', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', height: '180px', background: '#0F172A' }}>
+                    <img src={p.photoUrl} alt={p.caption} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <span style={{ position: 'absolute', top: '8px', right: '8px', background: '#2563EB', color: '#FFF', fontSize: '0.7rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px' }}>
+                      {p.issueCategory || 'Proof'}
+                    </span>
+                  </div>
+                  <div style={{ padding: '12px' }}>
+                    <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0F172A', marginBottom: '4px' }}>
+                      {p.caption}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748B', display: 'flex', justifyContent: 'space-between' }}>
+                      <span>🕒 {p.timestamp}</span>
+                      {p.geoTag && <span>📍 {p.geoTag.lat.toFixed(4)}°, {p.geoTag.lng.toFixed(4)}°</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Discrepancy & Anomaly Warnings Log */}
       {authenticity.discrepancyFlags.length > 0 && (
         <div className="glass-panel" style={{ padding: '20px', border: '1px solid #FCA5A5', background: '#FEE2E2' }}>
