@@ -139,8 +139,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [bankSearchQuery, setBankSearchQuery] = useState<string>('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
 
-  const passedRecords = records.filter(r => r.authenticity.overallScore >= 80 || r.status === 'PASSED_SELF_APPROVED');
-  const failedRecords = records.filter(r => r.authenticity.overallScore < 80 || r.status === 'FLAGGED_REVIEW_REQUIRED');
+  const failedRecords = records.filter(r => {
+    const hasNoAnswers = Object.values(r.predefinedAnswers || {}).some(a => a && a.answer === 'NO');
+    const hasPhotos = Object.values(r.predefinedAnswers || {}).some(a => a && a.photoProof);
+    const isPendingStatus = r.status === 'FLAGGED_REVIEW_REQUIRED' || (r.status as string) === 'Pending Admin Review' || (r.status as string) === 'Under Review';
+    return r.authenticity.overallScore < 85 || hasNoAnswers || hasPhotos || isPendingStatus;
+  });
+
+  const passedRecords = records.filter(r => !failedRecords.some(fr => fr.id === r.id));
 
   // Compute Workload Cards per Auditor
   const auditorWorkloads = (auditors || []).map(auditor => {

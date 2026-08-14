@@ -122,7 +122,8 @@ export const App: React.FC = () => {
     setRecords(prev => [newRecord, ...prev]);
     setSelectedRecord(newRecord);
 
-    const isAutoApproved = newRecord.authenticity.overallScore >= 85;
+    const hasNoAnswers = Object.values(newRecord.predefinedAnswers || {}).some(a => a && a.answer === 'NO');
+    const isAutoApproved = newRecord.authenticity.overallScore >= 85 && !hasNoAnswers;
     const finalStatus: AuditAssignmentStatus = isAutoApproved ? 'Completed (Auto-Approved)' : 'Pending Admin Review';
 
     // Update assignment status

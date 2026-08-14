@@ -270,8 +270,18 @@ export const GeoFenceAuditGate: React.FC<GeoFenceAuditGateProps> = ({ venue, act
             )}
 
             {gpsErrorMsg && (
-              <div style={{ padding: '6px 10px', background: '#FEE2E2', color: '#991B1B', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 700 }}>
-                {gpsErrorMsg}
+              <div style={{ padding: '12px 14px', background: '#FEE2E2', border: '1px solid #FCA5A5', color: '#991B1B', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 900, fontSize: '0.84rem' }}>
+                  <AlertTriangle size={18} color="#DC2626" /> {gpsErrorMsg}
+                </div>
+                <div style={{ fontSize: '0.76rem', color: '#7F1D1D', background: '#FFFFFF', padding: '8px 10px', borderRadius: '6px', border: '1px solid #FECACA' }}>
+                  <strong>📱 How to enable location on mobile browser:</strong>
+                  <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                    <li><strong>iPhone (Safari):</strong> Tap <code>Aa</code> or <code>🔒</code> icon in URL bar ➔ Website Settings ➔ Location ➔ Select <strong>Allow</strong>.</li>
+                    <li><strong>Android (Chrome):</strong> Tap <code>🔒</code> icon next to URL ➔ Permissions ➔ Location ➔ Select <strong>Allow</strong>.</li>
+                    <li>After enabling, tap <strong>Fetch Live Mobile GPS</strong> again or use <strong>At Venue (2.5m)</strong> testing button below to unlock.</li>
+                  </ul>
+                </div>
               </div>
             )}
           </div>
