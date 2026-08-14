@@ -101,7 +101,7 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
           </div>
 
           {/* AUDITOR CONTEXT SWITCHER DROPDOWN */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
+          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.2)', maxWidth: '100%', width: '100%' }}>
             <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#A7F3D0', display: 'block', marginBottom: '4px' }}>
               👤 Switch Active Auditor Context:
             </label>
@@ -111,7 +111,7 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
                 const found = allAuditors.find(a => a.id === e.target.value);
                 if (found) onSwitchAuditorProfile(found);
               }}
-              style={{ background: '#064E3B', color: '#FFFFFF', border: '1px solid #10B981', padding: '8px 14px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer' }}
+              style={{ background: '#064E3B', color: '#FFFFFF', border: '1px solid #10B981', padding: '8px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', width: '100%', maxWidth: '100%', textOverflow: 'ellipsis' }}
             >
               {allAuditors.map(auditor => (
                 <option key={auditor.id} value={auditor.id}>

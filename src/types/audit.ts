@@ -15,8 +15,40 @@ export const DEMO_AUDITORS: UserRole[] = [
     roleType: 'AUDITOR',
     name: 'Priya',
     email: 'priyal@bitsathy.ac.in',
-    title: 'Assistant Professor - III',
+    title: 'Assistant Professor - III (Dept of IT)',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'auditor-soundar',
+    roleType: 'AUDITOR',
+    name: 'Prof. Soundararajan',
+    email: 'soundar@bitsathy.ac.in',
+    title: 'Associate Professor (Media & Telecom)',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'auditor-anand',
+    roleType: 'AUDITOR',
+    name: 'RJ Anand',
+    email: 'rjanand@bitsathy.ac.in',
+    title: 'Campus Radio Coordinator & Auditor',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'auditor-sundaram',
+    roleType: 'AUDITOR',
+    name: 'Dr. M. Sundaram',
+    email: 'msundaram@bitsathy.ac.in',
+    title: 'Senior Professor (Mechanical & Safety)',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'auditor-sibi',
+    roleType: 'AUDITOR',
+    name: 'Prof. Sibi John',
+    email: 'sibi.john@bitsathy.ac.in',
+    title: 'Campus Facilities Auditor',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200'
   }
 ];
 

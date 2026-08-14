@@ -25,7 +25,16 @@ export function loadAuditors(): UserRole[] {
     const raw = localStorage.getItem(KEYS.AUDITORS);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const existingIds = new Set(parsed.map((a: UserRole) => a.id));
+        const merged = [...parsed];
+        for (const demoAud of DEMO_AUDITORS) {
+          if (!existingIds.has(demoAud.id)) {
+            merged.push(demoAud);
+          }
+        }
+        return merged;
+      }
     }
   } catch (e) {
     console.warn('Failed to load auditors from localStorage', e);
