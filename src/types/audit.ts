@@ -15,8 +15,24 @@ export const DEMO_AUDITORS: UserRole[] = [
     roleType: 'AUDITOR',
     name: 'Priya',
     email: 'priyal@bitsathy.ac.in',
-    title: 'Assistant Professor - III (Dept of IT)',
+    title: 'Medical Center Lead Auditor & On-Site Inspector',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'auditor-karthiga',
+    roleType: 'AUDITOR',
+    name: 'Mrs. Karthiga M',
+    email: 'karthiga@bitsathy.ac.in',
+    title: 'Assistant Professor - II',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'auditor-kaviyan',
+    roleType: 'AUDITOR',
+    name: 'Mr. Kaviyan P',
+    email: 'kaviyanp@bitsathy.ac.in',
+    title: 'Assistant Professor - I',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200'
   },
   {
     id: 'auditor-soundar',
