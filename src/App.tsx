@@ -47,24 +47,39 @@ export const App: React.FC = () => {
   const [showCertModal, setShowCertModal] = useState<boolean>(false);
 
   // Hydrate from MongoDB Backend if available
-  useEffect(() => {
-    const hydrateFromMongoDB = async () => {
+  const handleSyncLatestCloudData = async () => {
+    try {
+      const dbAssignments = await fetchAssignmentsApi();
+      if (dbAssignments && dbAssignments.length > 0) {
+        setAssignments(prev => {
+          const dbIds = new Set(dbAssignments.map(a => a.id));
+          const localOnly = prev.filter(a => !dbIds.has(a.id));
+          return [...dbAssignments, ...localOnly];
+        });
+      }
+
+      const dbAuditors = await fetchAuditorsApi();
+      if (dbAuditors && dbAuditors.length > 0) setAuditors(dbAuditors);
+
       const dbVenues = await fetchVenuesApi();
       if (dbVenues && dbVenues.length > 0) setVenues(dbVenues);
 
       const dbTemplates = await fetchTemplatesApi();
       if (dbTemplates && dbTemplates.length > 0) setTemplates(dbTemplates);
 
-      const dbAssignments = await fetchAssignmentsApi();
-      if (dbAssignments && dbAssignments.length > 0) setAssignments(dbAssignments);
-
       const dbRecords = await fetchRecordsApi();
       if (dbRecords && dbRecords.length > 0) setRecords(dbRecords);
+    } catch (e) {
+      console.warn('[Cloud Sync] Failed to poll latest data:', e);
+    }
+  };
 
-      const dbAuditors = await fetchAuditorsApi();
-      if (dbAuditors && dbAuditors.length > 0) setAuditors(dbAuditors);
-    };
-    hydrateFromMongoDB();
+  useEffect(() => {
+    handleSyncLatestCloudData();
+    const interval = setInterval(() => {
+      handleSyncLatestCloudData();
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   // Sync state changes to localStorage & MongoDB API
@@ -250,6 +265,7 @@ export const App: React.FC = () => {
                 setSelectedRecord(rec);
                 setShowCertModal(true);
               }}
+              onRefreshData={handleSyncLatestCloudData}
             />
           )}
 

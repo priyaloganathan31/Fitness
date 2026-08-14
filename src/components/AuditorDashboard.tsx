@@ -4,7 +4,7 @@ import { DEMO_AUDITORS } from '../types/audit';
 import { GeoFenceAuditGate } from './GeoFenceAuditGate';
 import { ActiveAuditSession } from './ActiveAuditSession';
 import { PreAuditTemplateOverview } from './PreAuditTemplateOverview';
-import { Play, Award, Clock, ArrowLeft, CheckCircle2, Building2, MapPin, ShieldCheck, Menu, X, Calendar, Download, ExternalLink } from 'lucide-react';
+import { Play, Award, Clock, ArrowLeft, CheckCircle2, Building2, MapPin, ShieldCheck, Menu, X, Calendar, Download, ExternalLink, RefreshCw } from 'lucide-react';
 import { getGoogleCalendarUrl, downloadIcsFile } from '../utils/calendarUtils';
 
 interface AuditorDashboardProps {
@@ -18,6 +18,7 @@ interface AuditorDashboardProps {
   onUpdateAssignmentStatus?: (assignmentId: string, status: AuditAssignment['status'], notes?: string) => void;
   onCompleteAuditAssignment: (assignment: AuditAssignment, record: CampusAuditRecord) => void;
   onViewCertificate: (record: CampusAuditRecord) => void;
+  onRefreshData?: () => void;
 }
 
 export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
@@ -30,7 +31,8 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
   venues,
   onUpdateAssignmentStatus,
   onCompleteAuditAssignment,
-  onViewCertificate
+  onViewCertificate,
+  onRefreshData
 }) => {
   const [auditorSubTab, setAuditorSubTab] = useState<'assigned' | 'completed' | 'venues'>('assigned');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -377,25 +379,51 @@ export const AuditorDashboard: React.FC<AuditorDashboardProps> = ({
               </div>
 
               {auditorSubTab === 'assigned' && (
-                <button
-                  type="button"
-                  onClick={() => setViewAllTasksMode(!viewAllTasksMode)}
-                  style={{
-                    background: viewAllTasksMode ? '#2563EB' : '#1E293B',
-                    color: viewAllTasksMode ? '#FFFFFF' : '#CBD5E1',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    padding: '9px 16px',
-                    borderRadius: '10px',
-                    fontSize: '0.82rem',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  {viewAllTasksMode ? '🌐 Showing All Tasks (Click to Filter)' : `👤 Filtered to ${activeAuditor.name} (Show All)`}
-                </button>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {onRefreshData && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onRefreshData();
+                        alert("🔄 Synced latest audit assignments from cloud!");
+                      }}
+                      style={{
+                        background: '#059669',
+                        color: '#FFFFFF',
+                        border: '1px solid #10B981',
+                        padding: '9px 16px',
+                        borderRadius: '10px',
+                        fontSize: '0.82rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <RefreshCw size={14} /> 🔄 Sync Tasks from Cloud
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setViewAllTasksMode(!viewAllTasksMode)}
+                    style={{
+                      background: viewAllTasksMode ? '#2563EB' : '#1E293B',
+                      color: viewAllTasksMode ? '#FFFFFF' : '#CBD5E1',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      padding: '9px 16px',
+                      borderRadius: '10px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {viewAllTasksMode ? '🌐 Showing All Tasks' : `👤 Filtered to ${activeAuditor.name} (Show All)`}
+                  </button>
+                </div>
               )}
             </div>
 

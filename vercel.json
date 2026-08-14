@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://fc-smart-audit-backend.onrender.com/api/$1z"
+      "destination": "https://fc-smart-audit-backend.onrender.com/api/$1"
     },
     {
       "source": "/(.*)",
