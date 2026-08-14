@@ -326,6 +326,76 @@ export const MOCK_AUDIT_RECORDS: CampusAuditRecord[] = [
       ratingScore: 5
     },
     cryptoSignatureHash: '0x99e8b11a77412c99a0021'
+  },
+  {
+    id: 'AUD-2026-RE-999',
+    assignmentId: 'ASG-RE-999',
+    parentRecordId: 'AUD-2026-DIN-044',
+    isReAudit: true,
+    reAuditComparisonScore: 94,
+    certificateNumber: 'FC-RE-2026-099',
+    venueId: 'FC-LOC-05',
+    venueName: 'Central Student Dining Hall & Kitchen',
+    venueCode: 'DIN-CNT-01',
+    venueCategory: 'Dining & Food Services',
+    auditorName: 'Priya',
+    auditedByAuditeeName: 'Chef In-Charge',
+    auditDate: '2026-08-14',
+    timeSpentMinutes: 18,
+    scannedQrMatched: true,
+    scannedQrCode: 'QR-FC-DINCNT01-SECURE-11495000-77275000',
+    liveGpsCoordinates: { lat: 13.00972, lng: 80.23512 },
+    targetGpsCoordinates: { lat: 13.00970, lng: 80.23510 },
+    gpsDistanceMeters: 2.1,
+    isGeoFenceVerified: true,
+    templateId: 'TMPL-MED-001',
+    predefinedAnswers: {
+      'MED-Q1': { questionId: 'MED-Q1', answer: 'YES', notes: 'Dining hall floor mopped and disinfected.' },
+      'MED-Q2': {
+        questionId: 'MED-Q2',
+        answer: 'YES',
+        notes: 'RE-AUDIT VERIFIED: Brand new heavy-duty V-belt installed on Exhaust Unit #3. Motor running smoothly.',
+        comparisonScore: 94,
+        initialAuditPhoto: {
+          id: 'photo-1st-audit',
+          questionId: 'MED-Q2',
+          photoUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=800',
+          caption: '1st Audit Defect: Snapped motor belt on Exhaust Fan Unit #3 (Kitchen Heat Hazard)',
+          timestamp: '2026-07-24 10:14:02',
+          geoTag: { lat: 13.00970, lng: 80.23510 },
+          issueCategory: 'Infrastructure'
+        },
+        photoProof: {
+          id: 'photo-reaudit-fix',
+          questionId: 'MED-Q2',
+          photoUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&q=80&w=800',
+          caption: 'Re-Audit Corrected Fix: New reinforced V-belt installed on Exhaust Fan Unit #3 (Fix Verified)',
+          timestamp: '2026-08-14 11:20:15',
+          geoTag: { lat: 13.00972, lng: 80.23512 },
+          issueCategory: 'Infrastructure'
+        }
+      }
+    },
+    aiDynamicQuestions: [],
+    authenticity: {
+      overallScore: 92,
+      isSelfApproved: true,
+      gpsProximityScore: 98,
+      dwellTimeScore: 92,
+      photoAuthenticityScore: 95,
+      aiDynamicCheckScore: 90,
+      discrepancyFlags: [],
+      reviewReason: 'Re-Audit completed. Side-by-Side Photo Comparison verifies complete resolution of initial exhaust fan defect.'
+    },
+    status: 'FLAGGED_REVIEW_REQUIRED',
+    auditorReviewNotes: 'Re-audit physical inspection completed. Defect fixed.',
+    auditorFeedback: {
+      overallSummary: 'Re-audit confirmed replacement of snapped exhaust motor belt. Kitchen ventilation fully restored.',
+      onGroundChallenges: 'None. Maintenance team completed installation.',
+      correctiveActionRecommended: 'Approve FC certificate.',
+      ratingScore: 5
+    },
+    cryptoSignatureHash: '0xre_audit_verified_hash_999'
   }
 ];
 

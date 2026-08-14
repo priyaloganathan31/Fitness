@@ -251,11 +251,16 @@ export interface AuditAssignment {
   specialInstructions?: string;
   progressPercentage: number;
   recordId?: string;
+  parentRecordId?: string;
+  isReAudit?: boolean;
 }
 
 export interface CampusAuditRecord {
   id: string;
   assignmentId?: string;
+  parentRecordId?: string;
+  isReAudit?: boolean;
+  reAuditComparisonScore?: number;
   certificateNumber: string;
   venueId: string;
   venueName: string;
@@ -280,6 +285,8 @@ export interface CampusAuditRecord {
     questionId: string;
     answer: 'YES' | 'NO';
     photoProof?: PhotoProof;
+    initialAuditPhoto?: PhotoProof;
+    comparisonScore?: number;
     notes?: string;
     dynamicFollowUps?: DynamicFollowUpQuestion[];
   }>;
